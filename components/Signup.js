@@ -1,112 +1,174 @@
-import React, {Component} from 'react'
-import {View, StyleSheet, Text, TextInput, ScrollView} from 'react-native'
-import BasicButton from "./BasicButton"
-import LoginSignupButton from "./LoginSignupButton"
-import {Picker} from "@react-native-picker/picker"
-import ValidationComponent from "react-native-form-validator"
-import {Audio} from "expo-av"
-import OrDivider from './OrDivider'
-import SnackBar from './SnackBar'
+import React, { Component } from 'react';
+import { StyleSheet, Text, View, TextInput, ScrollView } from 'react-native';
+import BasicButton from './BasicButton';
+import LoginSignUpBtn from './LoginSignUpButton';
+import { Picker } from '@react-native-picker/picker';
+import ValidationComponent from 'react-native-form-validator';
+import ORDivider from "./ORDivider";
+import SnackBar from "./SnackBar";
+import { Audio } from 'expo-av';
 
-export default class Signup extends ValidationComponent{
-  constructor (props){
-    super (props);
-    this.state = {name: "", email: "", ageGroup: "", password: "", confirmPassword: "", snackbarVisible: false, snackbarType: "", snackbarText: ""};
+export default class SignUp extends ValidationComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: '',
+      email: '',
+      ageGroup: '',
+      password: '',
+      confirmPassword: '',
+      snackBarVisible: false,
+      snackBarType: "",
+      snackBarText: "",
+    };
   }
 
   playAudio = async () => {
-    try{
-      const soundObject = new Audio.Sound();
-      await soundObject.loadAsync(require("../assets/ding2.mp3"))
-      await soundObject.playAsync()
-    }
-    catch(error){
-      console.log("Error occurred", error)
-    }
-  }
+    try {
+        const soundObject = new Audio.Sound();
+        await soundObject.loadAsync(require('../assets/ding2.mp3'));
+        await soundObject.playAsync();
 
-  handleRegisterButtonClick = ()=>{
+       
+    } catch (error) {
+        // An error occurred!
+    }
+}
+
+  //function to handle when signup btn is clicked on
+  handleRegisterBtnClick = () => {
+    //validating fields using 3rd party library
     this.validate({
-      name: {minlength: 3, maxlength: 25, required: true},
-      email: {email: true, required: true},
-      ageGroup: {required: true},
-      password: {required: true},
-      confirmPassword: {equalPassword: this.state.password, required: true}
+      name: { minlength: 3, maxlength: 25, required: true },
+      email: { email: true, required: true },
+      ageGroup: { required: true },
+      password: { required: true },
+      confirmPassword: { equalPassword: this.state.password, required: true },
     });
-    if(this.getErrorMessages()){
-      this.displaySnackBar("Error", this.getErrorMessages())
-    }
-    else{
-      this.hideSnackBar();
-      this.playAudio();
-      this.displaySnackBar("Success", "Login Clicked")
-    }
+
+      //if some error found in validation
+        //then displaying it in snackbar
+        if (this.getErrorMessages()) {
+          this.displaySnackBar("error", this.getErrorMessages());
+      } else {
+          this.hideSnackBar();
+          this.playAudio();
+          this.displaySnackBar("success", "Login Clicked!");
+      }
+
+  };
+
+ //function to display snackbar
+ displaySnackBar = (type, text) => {
+  this.setState({
+      "snackBarType": type,
+      "snackBarText": text,
+  });
+  this.setState({
+      "snackBarVisible": true
+  });
+}
+
+//function to hide snackbar
+hideSnackBar = () => {
+  this.setState({
+      "snackBarVisible": false
+  });
+}
+ 
+
+  //function to handle when sign in btn is clicked on
+  handleSignInBtnClick() {
+    console.log('sign in clicked');
   }
 
-  displaySnackBar = (type, text)=>{
-    this.setState({"snackBarType": type, "snackBarText": text});
-    this.setState({"snackBarVisible": true})
-  }
-
-  hideSnackBar = ()=>{
-    this.setState({"snackBarVisible": false})
-  }
-
-  handleSignInButtonClick(){
-    console.log("Sign in is clicked")
-  } 
-  render(){
-    return(
+  //component rendering
+  render() {
+    return (
       <>
       <ScrollView style={styles.container}>
         <Text style={styles.title}>Signup</Text>
+
         <View style={styles.form}>
           <Text style={styles.label}>Name</Text>
-          <TextInput placeholder = "Enter your name" value = {this.state.name} onChangeText = {(name)=>this.setState({name})}
-          style={styles.inputField}/>
+          <TextInput
+            style={styles.inputField}
+            placeholder="Enter your name"
+            value={this.state.name}
+            onChangeText={(name) => this.setState({ name })}
+          />
+
           <View style={styles.divider}></View>
-          <Text style={styles.label}>E-Mail Address</Text>
-          <TextInput placeholder = "Enter your E-Mail" value = {this.state.email} onChangeText = {(email)=>this.setState({email})}
-          style={styles.inputField}/>
+
+          <Text style={styles.label}>Email Address</Text>
+          <TextInput
+            style={styles.inputField}
+            keyboardType="email-address"
+            placeholder="Enter your registered email"
+            value={this.state.email}
+            onChangeText={(email) => this.setState({ email })}
+          />
+
           <View style={styles.divider}></View>
           <Text style={styles.label}>Age Group</Text>
-          <Picker selectedValue = {this.state.ageGroup} onValueChange = {(ageGroup, itemIndex)=>this.setState({ageGroup})}
-          style={styles.inputField}>
-            <Picker.Item label = "" value = ""/>
-            <Picker.Item label = "1-4" value = "1-4"/>
-            <Picker.Item label = "5-12" value = "5-12"/>
-            <Picker.Item label = "13-18" value = "13-18"/>
-          </Picker >
-          <View style={styles.divider}></View>
+          <Picker
+                style={styles.inputField}
+                selectedValue={this.state.ageGroup}
+                onValueChange={(ageGroup, itemIndex) => this.setState({ ageGroup })}>
+                <Picker.Item label="" value="" />
+                <Picker.Item label="1-4" value="1-4" />
+                <Picker.Item label="5-12" value="5-12" />
+                <Picker.Item label="13-18" value="13-18" />
+           </Picker>
+
+           <View style={styles.divider}></View>
+
           <Text style={styles.label}>Password</Text>
-          <TextInput placeholder = "Enter your password" value = {this.state.password} onChangeText = {(password)=>this.setState({password})}
-          secureTextEntry style={styles.inputField}/>
+          <TextInput
+            style={styles.inputField}
+            secureTextEntry
+            placeholder="Enter password"
+            value={this.state.password}
+            onChangeText={(password) => this.setState({ password })}
+          />
+
           <View style={styles.divider}></View>
+
           <Text style={styles.label}>Confirm Password</Text>
-          <TextInput placeholder = "Enter your password" value = {this.state.confirmPassword} onChangeText = {(confirmPassword)=>
-          this.setState({confirmPassword})} secureTextEntry style={styles.inputField}/>
+          <TextInput
+            style={styles.inputField}
+            secureTextEntry
+            placeholder="Confirm password"
+            value={this.state.confirmPassword}
+            onChangeText={(confirmPassword) =>
+              this.setState({ confirmPassword })
+            }
+          />
         </View>
-        <BasicButton text = "Register" onPress = {this.handleRegisterButtonClick} />
-        <OrDivider />
-        <LoginSignupButton text = "Already have an account?" buttonText = "Sign in" onPress = {this.handleSignInButtonClick} 
-        style={styles.signin}/>
+
+        <BasicButton text="Register" onPress={this.handleRegisterBtnClick} />
 
         
+        <ORDivider />
+        <LoginSignUpBtn
+          customStyle={styles.signin}
+          text="Already have an account?"
+          btnText="Sign in"
+          onPress={this.handleSignInBtnClick}
+        />
       </ScrollView>
-
-{
-  this.state.snackBarVisible ?
-      <SnackBar
-          isVisible={this.state.snackBarVisible}
-          text={this.state.snackBarText}
-          type={this.state.snackBarType}
-          onClose={this.hideSnackBar}
-      />
-      : null
-}
+       {
+        this.state.snackBarVisible ?
+            <SnackBar
+                isVisible={this.state.snackBarVisible}
+                text={this.state.snackBarText}
+                type={this.state.snackBarType}
+                onClose={this.hideSnackBar}
+            />
+            : null
+    }
 </>
-
-    )
+    );
   }
 }
 
